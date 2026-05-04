@@ -16,126 +16,131 @@
   --blue:#60a5fa;--blue-dim:#0a2040;
   --mono:'JetBrains Mono',monospace;
   --sans:'Syne',sans-serif;
+  --radius:6px;--radius-lg:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;min-height:100vh}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2)}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;min-height:100vh;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
 /* TOP NAV */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:100}
-.nav-brand{font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:-.01em;color:#fff}
-.nav-brand span{color:var(--green);font-family:var(--mono);font-weight:400;font-size:12px;margin-left:8px;opacity:.7}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:100}
+.nav-brand{font-family:var(--sans);font-size:18px;font-weight:700;letter-spacing:-.02em;color:#fff}
+.nav-brand span{color:var(--green);font-family:var(--mono);font-weight:400;font-size:13px;margin-left:10px;opacity:.7}
 .nav-actions{display:flex;gap:8px;align-items:center}
-.btn{padding:6px 14px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:11px;font-family:var(--mono);color:var(--text);transition:all .15s}
-.btn:hover{background:var(--bg3);border-color:var(--text3);color:#fff}
-.btn-green{border-color:var(--green);color:var(--green)}.btn-green:hover{background:var(--green-dim)}
+.btn{padding:8px 16px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:13px;font-family:var(--mono);color:var(--text);transition:all .15s}
+.btn:hover{background:var(--bg3);border-color:var(--text3);color:#fff;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-green{border-color:var(--green);color:var(--green)}.btn-green:hover{background:var(--green-dim);box-shadow:0 4px 12px rgba(74,222,128,.2)}
 .btn-red{border-color:var(--red);color:var(--red)}.btn-red:hover{background:var(--red-dim)}
-.btn-report{border-color:var(--blue);color:var(--blue);font-weight:500}.btn-report:hover{background:var(--blue-dim)}
+.btn-report{border-color:var(--blue);color:var(--blue);font-weight:500}.btn-report:hover{background:var(--blue-dim);box-shadow:0 4px 12px rgba(96,165,250,.2)}
 
 /* URL BAR */
-.url-bar{padding:16px 24px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
-.url-label{font-size:10px;color:var(--text3);white-space:nowrap;letter-spacing:.06em;text-transform:uppercase}
-.url-input{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;transition:border .15s}
-.url-input:focus{border-color:var(--green);color:#fff}
+.url-bar{padding:18px 28px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center}
+.url-label{font-size:12px;color:var(--text3);white-space:nowrap;letter-spacing:.06em;text-transform:uppercase}
+.url-input{flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border .15s,box-shadow .15s}
+.url-input:focus{border-color:var(--green);color:#fff;box-shadow:0 0 0 3px rgba(74,222,128,.1)}
 .url-input::placeholder{color:var(--text3)}
-.url-open-btn{padding:7px 14px;background:var(--green-dim);border:1px solid var(--green);border-radius:4px;color:var(--green);font-family:var(--mono);font-size:11px;cursor:pointer;white-space:nowrap;transition:all .15s}
-.url-open-btn:hover{background:var(--green);color:#000}
-.session-info{font-size:10px;color:var(--text3);white-space:nowrap}
+.url-open-btn{padding:9px 18px;background:var(--green-dim);border:1px solid var(--green);border-radius:var(--radius);color:var(--green);font-family:var(--mono);font-size:13px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.url-open-btn:hover{background:var(--green);color:#000;transform:translateY(-1px)}
+.session-info{font-size:12px;color:var(--text3);white-space:nowrap}
 
 /* STATS */
-.stats-bar{display:flex;gap:1px;padding:16px 24px;background:var(--bg);border-bottom:1px solid var(--border)}
-.stat{flex:1;padding:10px 14px;background:var(--bg2);border-radius:4px;text-align:center}
-.stat:first-child{border-radius:4px 0 0 4px}.stat:last-child{border-radius:0 4px 4px 0}
-.stat-n{font-size:22px;font-weight:500;font-family:var(--sans);line-height:1}
-.stat-l{font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
-.pbar-wrap{padding:0 24px 16px;background:var(--bg)}
-.pbar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
-.pfill{height:100%;background:var(--green2);border-radius:2px;transition:width .4s ease}
-.pct{font-size:10px;color:var(--text3);text-align:right;margin-top:4px}
+.stats-bar{display:flex;gap:8px;padding:20px 28px;background:var(--bg);border-bottom:1px solid var(--border)}
+.stat{flex:1;padding:16px 20px;background:var(--bg2);border-radius:8px;text-align:center;border:1px solid var(--border);transition:border-color .2s}
+.stat:hover{border-color:var(--border2)}
+.stat-n{font-size:28px;font-weight:600;font-family:var(--sans);line-height:1}
+.stat-l{font-size:12px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.06em}
+.pbar-wrap{padding:0 28px 20px;background:var(--bg)}
+.pbar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.pfill{height:100%;background:var(--green2);border-radius:3px;transition:width .4s ease;box-shadow:0 0 10px rgba(74,222,128,.5)}
+.pct{font-size:12px;color:var(--text3);text-align:right;margin-top:6px}
 
 /* MAIN */
 .main{display:flex;gap:0}
-.sidebar{width:220px;min-width:220px;border-right:1px solid var(--border);height:calc(100vh - 180px);overflow-y:auto;position:sticky;top:180px;background:var(--bg2)}
-.sidebar-item{padding:9px 16px;cursor:pointer;font-size:11px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
+.sidebar{width:240px;min-width:240px;border-right:1px solid var(--border);height:calc(100vh - 230px);overflow-y:auto;position:sticky;top:230px;background:var(--bg2)}
+.sidebar-item{padding:12px 20px;cursor:pointer;font-size:13px;color:var(--text2);border-left:3px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
 .sidebar-item:hover{background:var(--bg3);color:var(--text)}
 .sidebar-item.active{color:var(--green);border-left-color:var(--green);background:var(--green-dim)}
 .sidebar-item.all-pass{color:var(--green2)}
 .sidebar-item.has-fail{color:var(--red)}
-.sidebar-dot{width:6px;height:6px;border-radius:50%;background:var(--border2)}
+.sidebar-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0}
 .sidebar-dot.pass{background:var(--green2)}.sidebar-dot.fail{background:var(--red2)}.sidebar-dot.partial{background:var(--amber)}
 
-.content{flex:1;padding:20px 24px;max-width:900px}
+.content{flex:1;padding:24px 28px;max-width:920px}
 
 /* CATEGORY */
-.cat-header{font-family:var(--sans);font-size:11px;font-weight:500;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.cat-header{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:4px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
 
 /* STEP */
-.step{background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;overflow:hidden;transition:border-color .2s}
-.step.pass{border-color:var(--green-dim)}.step.fail{border-color:var(--red-dim)}
-.step-head{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none}
+.step{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.step:hover{box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.step.pass{border-color:rgba(34,197,94,.3);border-left:3px solid var(--green2)}
+.step.fail{border-color:rgba(239,68,68,.3);border-left:3px solid var(--red2)}
+.step-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
 .step-head:hover{background:var(--bg3)}
-.snum{font-size:10px;color:var(--text3);min-width:24px;font-weight:500}
-.sname{flex:1;font-size:12px;color:var(--text);font-weight:400}
+.snum{font-size:12px;color:var(--text3);min-width:28px;font-weight:500}
+.sname{flex:1;font-size:14px;color:var(--text);font-weight:400}
 .step.pass .sname{color:var(--green)}
 .step.fail .sname{color:var(--red)}
-.sbadge{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:500;border:1px solid}
+.sbadge{font-size:11px;padding:3px 10px;border-radius:4px;font-weight:500;border:1px solid}
 .sbadge-open{background:var(--bg3);color:var(--text3);border-color:var(--border)}
-.sbadge-pass{background:var(--green-dim);color:var(--green);border-color:var(--green-dim)}
-.sbadge-fail{background:var(--red-dim);color:var(--red);border-color:var(--red-dim)}
-.sarr{font-size:9px;color:var(--text3);transition:transform .2s}
+.sbadge-pass{background:var(--green-dim);color:var(--green);border-color:rgba(74,222,128,.3)}
+.sbadge-fail{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.3)}
+.sarr{font-size:11px;color:var(--text3);transition:transform .2s}
 .sarr.open{transform:rotate(180deg)}
 
-.step-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.step-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
 .step-body.open{display:block}
-.sdesc{font-size:11px;color:var(--text2);margin:10px 0;line-height:1.7;padding:8px 10px;background:var(--bg3);border-radius:4px;border-left:2px solid var(--border2)}
-.acts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.warn-msg{font-size:11px;color:var(--amber);background:var(--amber-dim);padding:5px 10px;border-radius:4px;margin-bottom:8px;display:none}
+.sdesc{font-size:13px;color:var(--text2);margin:12px 0;line-height:1.75;padding:12px 14px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--border2)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.warn-msg{font-size:13px;color:var(--amber);background:var(--amber-dim);padding:8px 12px;border-radius:6px;margin-bottom:10px;display:none;border:1px solid rgba(251,191,36,.2)}
 .warn-msg.show{display:block}
 
 /* NOTES */
-.notes-row{margin-bottom:8px}
-.notes-label{font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.notes-inp{width:100%;padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;resize:none;min-height:40px;transition:border .15s}
-.notes-inp:focus{border-color:var(--green)}
+.notes-row{margin-bottom:12px}
+.notes-label{font-size:12px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.notes-inp{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;resize:none;min-height:56px;transition:border .15s,box-shadow .15s;line-height:1.6}
+.notes-inp:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,128,.1)}
 
 /* BUGS */
-.bugs-section{margin-top:8px}
-.bugs-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-.bug-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;margin-bottom:4px}
-.bug-text{flex:1;font-size:11px;color:var(--text);line-height:1.5}
+.bugs-section{margin-top:12px}
+.bugs-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.bug-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--red2);border-radius:6px;margin-bottom:6px;transition:box-shadow .15s}
+.bug-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.bug-text{flex:1;font-size:13px;color:var(--text);line-height:1.6}
 .bug-text.res{text-decoration:line-through;color:var(--text3)}
-.bug-resolve{padding:2px 8px;font-size:10px;border-radius:3px;border:1px solid var(--green-dim);background:transparent;cursor:pointer;color:var(--green);font-family:var(--mono);transition:all .15s}
+.bug-resolve{padding:4px 10px;font-size:12px;border-radius:4px;border:1px solid var(--green-dim);background:transparent;cursor:pointer;color:var(--green);font-family:var(--mono);transition:all .15s}
 .bug-resolve:hover{background:var(--green-dim)}
-.bug-done{font-size:10px;color:var(--green);opacity:.6}
-.bug-add-row{display:flex;gap:6px;margin-top:5px}
-.bug-inp{flex:1;padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none}
-.bug-inp:focus{border-color:var(--red)}
+.bug-done{font-size:12px;color:var(--green);opacity:.6}
+.bug-add-row{display:flex;gap:8px;margin-top:8px}
+.bug-inp{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border .15s,box-shadow .15s}
+.bug-inp:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(248,113,113,.1)}
 .bug-inp::placeholder{color:var(--text3)}
 
 /* FINAL */
-.final-card{margin:20px 0;padding:20px;border-radius:8px;border:1px solid;display:none}
+.final-card{margin:24px 0;padding:24px;border-radius:10px;border:1px solid;display:none}
 .final-card.show{display:block}
-.final-card.ok{border-color:var(--green);background:var(--green-dim)}
-.final-card.no{border-color:var(--red);background:var(--red-dim)}
-.final-title{font-family:var(--sans);font-size:16px;font-weight:700;margin-bottom:6px}
+.final-card.ok{border-color:var(--green);background:var(--green-dim);box-shadow:0 4px 20px rgba(74,222,128,.1)}
+.final-card.no{border-color:var(--red);background:var(--red-dim);box-shadow:0 4px 20px rgba(248,113,113,.1)}
+.final-title{font-family:var(--sans);font-size:18px;font-weight:700;margin-bottom:8px}
 .final-card.ok .final-title{color:var(--green)}
 .final-card.no .final-title{color:var(--red)}
-.final-sub{font-size:11px;color:var(--text2)}
+.final-sub{font-size:13px;color:var(--text2);line-height:1.6}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .modal-overlay.show{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:24px;width:460px;max-width:90vw}
-.modal-title{font-family:var(--sans);font-size:15px;font-weight:700;margin-bottom:6px;color:#fff}
-.modal-sub{font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.6}
-.modal-input{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:#fff;font-family:var(--mono);font-size:12px;outline:none;margin-bottom:12px}
-.modal-input:focus{border-color:var(--green)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:28px;width:480px;max-width:90vw;box-shadow:0 24px 64px rgba(0,0,0,.8)}
+.modal-title{font-family:var(--sans);font-size:18px;font-weight:700;margin-bottom:8px;color:#fff}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.65}
+.modal-input{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:#fff;font-family:var(--mono);font-size:14px;outline:none;margin-bottom:14px;transition:border .15s,box-shadow .15s}
+.modal-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,128,.1)}
 .modal-acts{display:flex;gap:8px;justify-content:flex-end}
-.sessions-list{max-height:200px;overflow-y:auto;margin-bottom:12px}
-.session-row{padding:8px 10px;border:1px solid var(--border);border-radius:4px;margin-bottom:4px;cursor:pointer;transition:all .15s}
+.sessions-list{max-height:240px;overflow-y:auto;margin-bottom:16px}
+.session-row{padding:12px 14px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;cursor:pointer;transition:all .15s}
 .session-row:hover{border-color:var(--green);background:var(--green-dim)}
-.session-row-url{font-size:11px;color:var(--text)}
-.session-row-meta{font-size:10px;color:var(--text3);margin-top:2px}
+.session-row-url{font-size:13px;color:var(--text)}
+.session-row-meta{font-size:12px;color:var(--text3);margin-top:4px}
 </style>
 </head>
 <body>
@@ -185,6 +190,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13
     <div class="modal-sub">Enter the URL of the site you want to test. A new session will be created and saved to your browser storage.</div>
     <input class="modal-input" id="newSessionUrl" type="text" placeholder="https://example.com">
     <input class="modal-input" id="newSessionName" type="text" placeholder="Session name (optional)">
+    <select class="modal-input" id="newSessionType" style="cursor:pointer">
+      <option value="visual">Visual Testing (30 steps)</option>
+      <option value="form">Form Testing (31 steps)</option>
+    </select>
     <div class="modal-acts">
       <button class="btn" onclick="closeModal('newSessionModal')">Cancel</button>
       <button class="btn btn-green" onclick="createSession()">Create Session</button>
@@ -258,11 +267,67 @@ const STEPS_DEF = [
   ]}
 ];
 
+const FORM_STEPS_DEF = [
+  { cat: "Field Validation", steps: [
+    { n: "Required fields block submit", d: "Leave all required fields empty. Click submit. Form must NOT submit — show error on each required field." },
+    { n: "Email format validation", d: "Enter invalid emails: 'abc', 'abc@', '@test.com', 'a@b'. All must fail. Enter valid email — must pass." },
+    { n: "Phone number format", d: "Enter letters, special chars, too-short/long numbers. Check format mask or error. Valid number must pass." },
+    { n: "Min / max length enforced", d: "Enter 1 char in fields with minlength. Paste 10,000 chars in fields with maxlength. Both must be caught." },
+    { n: "Number field — non-numeric input", d: "Type letters into number input. Field must reject or show error. Min/max range limits enforced." },
+    { n: "Password strength rules", d: "Enter weak password (e.g. '123'). Rules must show: min length, uppercase, symbol requirements." },
+    { n: "Password confirm match", d: "Enter mismatched passwords. Error must show on blur or submit. Matching passwords clears error." },
+    { n: "URL field format", d: "Enter 'notaurl', 'ftp://', blank. Each must fail. 'https://example.com' must pass." },
+  ]},
+  { cat: "User Input Behavior", steps: [
+    { n: "Paste into fields works", d: "Paste text into every field. Content should populate correctly. No silent strip or corruption." },
+    { n: "Autofill / autocomplete", d: "Use browser autofill on name, email, address fields. Values populate. Form state updates correctly." },
+    { n: "Copy from read-only fields", d: "Read-only fields (e.g. reference numbers) allow text selection and copy. Cannot be edited." },
+    { n: "Tab key order", d: "Tab through entire form. Focus moves top-to-bottom, left-to-right. No skip, no trap, no jump to wrong field." },
+    { n: "Special characters in text fields", d: "Enter: <script>, ' OR 1=1--, emoji 🎉, unicode ñ, null byte. All stored/displayed safely. No crash or injection." },
+    { n: "Whitespace-only input", d: "Enter only spaces in required text fields. Must fail validation — not treated as valid input." },
+    { n: "Leading/trailing spaces trimmed", d: "Enter ' john ' in name field. On submit, stored value should be 'john' (trimmed). Check in response or DB." },
+  ]},
+  { cat: "Submit & Response", steps: [
+    { n: "Submit button disabled after click", d: "Click submit once. Button must disable immediately to prevent double-submit. Re-enables on error." },
+    { n: "Loading state shows", d: "After submit, spinner or loading indicator appears. User knows request is in progress." },
+    { n: "Success message on valid submit", d: "Fill form correctly, submit. Clear success message appears. No raw JSON or blank page." },
+    { n: "Error on server failure", d: "Simulate server error (disconnect network or use bad endpoint). User-friendly error message shows. No crash." },
+    { n: "Form data sent correctly", d: "Open DevTools Network tab. Submit form. Check request payload — all field values present and correct." },
+    { n: "Redirect after success", d: "If form redirects on success, check destination URL is correct. Back button behavior is expected." },
+  ]},
+  { cat: "Edge Cases", steps: [
+    { n: "Submit empty form directly", d: "Skip to submit with nothing filled. All required field errors show simultaneously. No partial submission." },
+    { n: "Rapid repeated submit", d: "Click submit 5 times fast. Only ONE request sent. No duplicate records created." },
+    { n: "Browser back after submit", d: "Submit form, then hit browser back. Form should not re-submit. Data should not duplicate." },
+    { n: "Refresh on success page", d: "After submit success, refresh the page. Must NOT re-submit the form. Show neutral state." },
+    { n: "Very long input values", d: "Enter 1000+ chars in text fields. Page layout must not break. Value truncated or error shown cleanly." },
+    { n: "Dropdown with no selection", d: "Leave required select/dropdown unselected. Submit blocked. Error shown pointing to dropdown." },
+  ]},
+  { cat: "Accessibility & UX", steps: [
+    { n: "Error messages are descriptive", d: "Errors must say WHAT is wrong: not just red border. E.g. 'Email must include @' not 'Invalid'." },
+    { n: "Labels linked to inputs", d: "Every input has <label for='id'> or aria-label. Screen reader announces field name on focus." },
+    { n: "Keyboard-only form completion", d: "Complete and submit entire form using only keyboard. Zero mouse interaction. Must fully work." },
+    { n: "Error focus management", d: "After failed submit, focus moves to first error field. Screen reader users know where to start fixing." },
+  ]}
+];
+
+const TEST_TYPES = {
+  visual: { label: 'Visual Testing', def: STEPS_DEF },
+  form:   { label: 'Form Testing',   def: FORM_STEPS_DEF }
+};
+
 let ALL_STEPS = [];
-let idx = 1;
-STEPS_DEF.forEach(c => c.steps.forEach(s => {
-  ALL_STEPS.push({ ...s, id: idx++, cat: c.cat });
-}));
+
+function buildSteps(type) {
+  ALL_STEPS = [];
+  let idx = 1;
+  const def = (TEST_TYPES[type] || TEST_TYPES.visual).def;
+  def.forEach(c => c.steps.forEach(s => {
+    ALL_STEPS.push({ ...s, id: idx++, cat: c.cat });
+  }));
+}
+
+buildSteps('visual');
 
 let currentSessionId = null;
 
@@ -281,13 +346,15 @@ function saveCurrentSession(session) {
   saveSessions(ss);
 }
 
-function newSessionData(url, name) {
+function newSessionData(url, name, type) {
+  buildSteps(type);
   const steps = {};
   ALL_STEPS.forEach(s => { steps[s.id] = { status: 'open', bugs: [], notes: '' }; });
   return {
     id: Date.now().toString(),
     url: url,
     name: name || url,
+    type: type || 'visual',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     steps
@@ -297,20 +364,24 @@ function newSessionData(url, name) {
 function loadSession(id) {
   currentSessionId = id;
   localStorage.setItem('qa_current_session', id);
+  const session = getCurrentSession();
+  if (session) buildSteps(session.type || 'visual');
   render();
 }
 
 function showNewSession() {
   document.getElementById('newSessionUrl').value = '';
   document.getElementById('newSessionName').value = '';
+  document.getElementById('newSessionType').value = 'visual';
   document.getElementById('newSessionModal').classList.add('show');
 }
 
 function createSession() {
   const url = document.getElementById('newSessionUrl').value.trim();
   const name = document.getElementById('newSessionName').value.trim();
+  const type = document.getElementById('newSessionType').value;
   if (!url) { alert('Enter a URL'); return; }
-  const session = newSessionData(url, name);
+  const session = newSessionData(url, name, type);
   const ss = getSessions();
   ss.push(session);
   saveSessions(ss);
@@ -333,7 +404,7 @@ function showSessions() {
       const d = new Date(s.createdAt);
       return `<div class="session-row" onclick="closeModal('sessionsModal');loadSession('${s.id}')">
         <div class="session-row-url">${s.name || s.url}</div>
-        <div class="session-row-meta">${d.toLocaleDateString()} ${d.toLocaleTimeString()} &nbsp;|&nbsp; ${passed} pass / ${failed} fail / ${30 - passed - failed} pending</div>
+        <div class="session-row-meta">${d.toLocaleDateString()} ${d.toLocaleTimeString()} &nbsp;|&nbsp; ${TEST_TYPES[s.type]?.label || 'Visual'} &nbsp;|&nbsp; ${passed} pass / ${failed} fail / ${steps.length - passed - failed} pending</div>
       </div>`;
     }).join('');
   }
@@ -361,6 +432,7 @@ function resetCurrent() {
   const ss = getSessions();
   const i = ss.findIndex(s => s.id === currentSessionId);
   if (i >= 0) {
+    buildSteps(ss[i].type || 'visual');
     ss[i].steps = {};
     ALL_STEPS.forEach(s => { ss[i].steps[s.id] = { status: 'open', bugs: [], notes: '' }; });
     ss[i].updatedAt = new Date().toISOString();
@@ -416,25 +488,27 @@ function updateStats() {
   const steps = session ? Object.values(session.steps) : [];
   const passed = steps.filter(x => x.status === 'pass').length;
   const failed = steps.filter(x => x.status === 'fail').length;
-  const pending = 30 - passed - failed;
+  const total = ALL_STEPS.length;
+  const pending = total - passed - failed;
   const done = passed + failed;
   const bugs = totalOpenBugs();
 
+  document.getElementById('st-total').textContent = total;
   document.getElementById('st-pass').textContent = passed;
   document.getElementById('st-fail').textContent = failed;
   document.getElementById('st-pend').textContent = pending;
   document.getElementById('st-bugs').textContent = bugs;
-  const pct = Math.round(done / 30 * 100);
+  const pct = total ? Math.round(done / total * 100) : 0;
   document.getElementById('prog').style.width = pct + '%';
-  document.getElementById('pct').textContent = pct + '% complete (' + done + '/30)';
+  document.getElementById('pct').textContent = pct + '% complete (' + done + '/' + total + ')';
 
   // Final card
   const fc = document.getElementById('finalCard');
-  if (done === 30) {
+  if (total > 0 && done === total) {
     fc.classList.add('show');
     if (failed === 0 && bugs === 0) {
       fc.className = 'final-card show ok';
-      document.getElementById('finalTitle').textContent = '✓ All 30 steps passed — site is clean.';
+      document.getElementById('finalTitle').textContent = '✓ All ' + total + ' steps passed — site is clean.';
       document.getElementById('finalSub').textContent = 'No open bugs. Ready to ship. View full report for details.';
     } else {
       fc.className = 'final-card show no';
@@ -469,6 +543,10 @@ function renderSidebar() {
 function scrollToCat(cat) {
   const el = document.getElementById('cat-' + cat.replace(/\s+/g, '-'));
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function renderContent() {
@@ -506,7 +584,7 @@ function renderContent() {
         <span class="sarr ${exp ? 'open' : ''}">▼</span>
       </div>
       <div class="step-body ${exp ? 'open' : ''}">
-        <div class="sdesc">${step.d}</div>
+        <div class="sdesc">${escHtml(step.d)}</div>
         <div class="warn-msg ${st.status === 'fail' && ob > 0 ? 'show' : ''}" id="warn-${step.id}">
           ⚠ ${ob} open bug${ob !== 1 ? 's' : ''} must be resolved before marking this step as passed.
         </div>
@@ -523,7 +601,7 @@ function renderContent() {
           ${st.bugs.length ? '<div class="bugs-label">Bugs logged</div>' : ''}
           ${st.bugs.map((b, i) => `
             <div class="bug-item">
-              <span class="bug-text ${b.resolved ? 'res' : ''}">${b.text}</span>
+              <span class="bug-text ${b.resolved ? 'res' : ''}">${escHtml(b.text)}</span>
               ${!b.resolved
                 ? `<button class="bug-resolve" onclick="resolveB(${step.id},${i})">resolved ✓</button>`
                 : `<span class="bug-done">✓ fixed</span>`}
@@ -611,6 +689,8 @@ window.addEventListener('click', e => {
 const savedId = localStorage.getItem('qa_current_session');
 if (savedId && getSessions().find(s => s.id === savedId)) {
   currentSessionId = savedId;
+  const _s = getCurrentSession();
+  if (_s) buildSteps(_s.type || 'visual');
   render();
 } else {
   render();
