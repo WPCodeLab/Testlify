@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Visual Tester</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0e;--bg2:#131614;--bg3:#1a1d1b;--bg4:#222622;
+  --border:#2a2e2a;--border2:#3a3f3a;
+  --text:#d4d9d4;--text2:#8a8f8a;--text3:#5a5f5a;
+  --green:#4ade80;--green2:#22c55e;--green-dim:#1a3d26;
+  --red:#f87171;--red2:#ef4444;--red-dim:#3d1a1a;
+  --amber:#fbbf24;--amber-dim:#3d2f0a;
+  --blue:#60a5fa;--blue-dim:#0a2040;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2)}
+
+/* TOP NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:100}
+.nav-brand{font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:-.01em;color:#fff}
+.nav-brand span{color:var(--green);font-family:var(--mono);font-weight:400;font-size:12px;margin-left:8px;opacity:.7}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.btn{padding:6px 14px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:11px;font-family:var(--mono);color:var(--text);transition:all .15s}
+.btn:hover{background:var(--bg3);border-color:var(--text3);color:#fff}
+.btn-green{border-color:var(--green);color:var(--green)}.btn-green:hover{background:var(--green-dim)}
+.btn-red{border-color:var(--red);color:var(--red)}.btn-red:hover{background:var(--red-dim)}
+.btn-report{border-color:var(--blue);color:var(--blue);font-weight:500}.btn-report:hover{background:var(--blue-dim)}
+
+/* URL BAR */
+.url-bar{padding:16px 24px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.url-label{font-size:10px;color:var(--text3);white-space:nowrap;letter-spacing:.06em;text-transform:uppercase}
+.url-input{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;transition:border .15s}
+.url-input:focus{border-color:var(--green);color:#fff}
+.url-input::placeholder{color:var(--text3)}
+.url-open-btn{padding:7px 14px;background:var(--green-dim);border:1px solid var(--green);border-radius:4px;color:var(--green);font-family:var(--mono);font-size:11px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.url-open-btn:hover{background:var(--green);color:#000}
+.session-info{font-size:10px;color:var(--text3);white-space:nowrap}
+
+/* STATS */
+.stats-bar{display:flex;gap:1px;padding:16px 24px;background:var(--bg);border-bottom:1px solid var(--border)}
+.stat{flex:1;padding:10px 14px;background:var(--bg2);border-radius:4px;text-align:center}
+.stat:first-child{border-radius:4px 0 0 4px}.stat:last-child{border-radius:0 4px 4px 0}
+.stat-n{font-size:22px;font-weight:500;font-family:var(--sans);line-height:1}
+.stat-l{font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+.pbar-wrap{padding:0 24px 16px;background:var(--bg)}
+.pbar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.pfill{height:100%;background:var(--green2);border-radius:2px;transition:width .4s ease}
+.pct{font-size:10px;color:var(--text3);text-align:right;margin-top:4px}
+
+/* MAIN */
+.main{display:flex;gap:0}
+.sidebar{width:220px;min-width:220px;border-right:1px solid var(--border);height:calc(100vh - 180px);overflow-y:auto;position:sticky;top:180px;background:var(--bg2)}
+.sidebar-item{padding:9px 16px;cursor:pointer;font-size:11px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
+.sidebar-item:hover{background:var(--bg3);color:var(--text)}
+.sidebar-item.active{color:var(--green);border-left-color:var(--green);background:var(--green-dim)}
+.sidebar-item.all-pass{color:var(--green2)}
+.sidebar-item.has-fail{color:var(--red)}
+.sidebar-dot{width:6px;height:6px;border-radius:50%;background:var(--border2)}
+.sidebar-dot.pass{background:var(--green2)}.sidebar-dot.fail{background:var(--red2)}.sidebar-dot.partial{background:var(--amber)}
+
+.content{flex:1;padding:20px 24px;max-width:900px}
+
+/* CATEGORY */
+.cat-header{font-family:var(--sans);font-size:11px;font-weight:500;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* STEP */
+.step{background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;overflow:hidden;transition:border-color .2s}
+.step.pass{border-color:var(--green-dim)}.step.fail{border-color:var(--red-dim)}
+.step-head{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none}
+.step-head:hover{background:var(--bg3)}
+.snum{font-size:10px;color:var(--text3);min-width:24px;font-weight:500}
+.sname{flex:1;font-size:12px;color:var(--text);font-weight:400}
+.step.pass .sname{color:var(--green)}
+.step.fail .sname{color:var(--red)}
+.sbadge{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:500;border:1px solid}
+.sbadge-open{background:var(--bg3);color:var(--text3);border-color:var(--border)}
+.sbadge-pass{background:var(--green-dim);color:var(--green);border-color:var(--green-dim)}
+.sbadge-fail{background:var(--red-dim);color:var(--red);border-color:var(--red-dim)}
+.sarr{font-size:9px;color:var(--text3);transition:transform .2s}
+.sarr.open{transform:rotate(180deg)}
+
+.step-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.step-body.open{display:block}
+.sdesc{font-size:11px;color:var(--text2);margin:10px 0;line-height:1.7;padding:8px 10px;background:var(--bg3);border-radius:4px;border-left:2px solid var(--border2)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.warn-msg{font-size:11px;color:var(--amber);background:var(--amber-dim);padding:5px 10px;border-radius:4px;margin-bottom:8px;display:none}
+.warn-msg.show{display:block}
+
+/* NOTES */
+.notes-row{margin-bottom:8px}
+.notes-label{font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.notes-inp{width:100%;padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;resize:none;min-height:40px;transition:border .15s}
+.notes-inp:focus{border-color:var(--green)}
+
+/* BUGS */
+.bugs-section{margin-top:8px}
+.bugs-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.bug-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;margin-bottom:4px}
+.bug-text{flex:1;font-size:11px;color:var(--text);line-height:1.5}
+.bug-text.res{text-decoration:line-through;color:var(--text3)}
+.bug-resolve{padding:2px 8px;font-size:10px;border-radius:3px;border:1px solid var(--green-dim);background:transparent;cursor:pointer;color:var(--green);font-family:var(--mono);transition:all .15s}
+.bug-resolve:hover{background:var(--green-dim)}
+.bug-done{font-size:10px;color:var(--green);opacity:.6}
+.bug-add-row{display:flex;gap:6px;margin-top:5px}
+.bug-inp{flex:1;padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none}
+.bug-inp:focus{border-color:var(--red)}
+.bug-inp::placeholder{color:var(--text3)}
+
+/* FINAL */
+.final-card{margin:20px 0;padding:20px;border-radius:8px;border:1px solid;display:none}
+.final-card.show{display:block}
+.final-card.ok{border-color:var(--green);background:var(--green-dim)}
+.final-card.no{border-color:var(--red);background:var(--red-dim)}
+.final-title{font-family:var(--sans);font-size:16px;font-weight:700;margin-bottom:6px}
+.final-card.ok .final-title{color:var(--green)}
+.final-card.no .final-title{color:var(--red)}
+.final-sub{font-size:11px;color:var(--text2)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:24px;width:460px;max-width:90vw}
+.modal-title{font-family:var(--sans);font-size:15px;font-weight:700;margin-bottom:6px;color:#fff}
+.modal-sub{font-size:11px;color:var(--text2);margin-bottom:16px;line-height:1.6}
+.modal-input{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:#fff;font-family:var(--mono);font-size:12px;outline:none;margin-bottom:12px}
+.modal-input:focus{border-color:var(--green)}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end}
+.sessions-list{max-height:200px;overflow-y:auto;margin-bottom:12px}
+.session-row{padding:8px 10px;border:1px solid var(--border);border-radius:4px;margin-bottom:4px;cursor:pointer;transition:all .15s}
+.session-row:hover{border-color:var(--green);background:var(--green-dim)}
+.session-row-url{font-size:11px;color:var(--text)}
+.session-row-meta{font-size:10px;color:var(--text3);margin-top:2px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">QA Tester <span>v1.0</span></div>
+  <div class="nav-actions">
+    <button class="btn" onclick="showSessions()">Sessions</button>
+    <button class="btn btn-red" onclick="resetCurrent()">Reset</button>
+    <button class="btn btn-report" onclick="goReport()">View Report →</button>
+  </div>
+</nav>
+
+<div class="url-bar">
+  <span class="url-label">Target URL</span>
+  <input class="url-input" id="urlInput" type="text" placeholder="https://example.com" value="">
+  <button class="url-open-btn" onclick="openTarget()">Open in New Tab ↗</button>
+  <span class="session-info" id="sessionInfo">no session</span>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-n" id="st-total">30</div><div class="stat-l">Total</div></div>
+  <div class="stat"><div class="stat-n" id="st-pass" style="color:var(--green)">0</div><div class="stat-l">Passed</div></div>
+  <div class="stat"><div class="stat-n" id="st-fail" style="color:var(--red)">0</div><div class="stat-l">Failed</div></div>
+  <div class="stat"><div class="stat-n" id="st-pend" style="color:var(--text3)">30</div><div class="stat-l">Pending</div></div>
+  <div class="stat"><div class="stat-n" id="st-bugs" style="color:var(--amber)">0</div><div class="stat-l">Open Bugs</div></div>
+</div>
+<div class="pbar-wrap">
+  <div class="pbar"><div class="pfill" id="prog" style="width:0%"></div></div>
+  <div class="pct" id="pct">0% complete</div>
+</div>
+
+<div class="main">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="content" id="content"></div>
+</div>
+
+<div class="final-card" id="finalCard">
+  <div class="final-title" id="finalTitle"></div>
+  <div class="final-sub" id="finalSub"></div>
+</div>
+
+<!-- New Session Modal -->
+<div class="modal-overlay" id="newSessionModal">
+  <div class="modal">
+    <div class="modal-title">New Test Session</div>
+    <div class="modal-sub">Enter the URL of the site you want to test. A new session will be created and saved to your browser storage.</div>
+    <input class="modal-input" id="newSessionUrl" type="text" placeholder="https://example.com">
+    <input class="modal-input" id="newSessionName" type="text" placeholder="Session name (optional)">
+    <div class="modal-acts">
+      <button class="btn" onclick="closeModal('newSessionModal')">Cancel</button>
+      <button class="btn btn-green" onclick="createSession()">Create Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sessions List Modal -->
+<div class="modal-overlay" id="sessionsModal">
+  <div class="modal">
+    <div class="modal-title">Test Sessions</div>
+    <div class="modal-sub">Select a session to continue, or create a new one.</div>
+    <div class="sessions-list" id="sessionsList"></div>
+    <div class="modal-acts">
+      <button class="btn" onclick="closeModal('sessionsModal')">Close</button>
+      <button class="btn btn-green" onclick="closeModal('sessionsModal');showNewSession()">+ New Session</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STEPS_DEF = [
+  { cat: "Layout & Structure", steps: [
+    { n: "Viewport meta tag", d: "Check <meta name='viewport'> is present. Page scales correctly on all device sizes. No zoom issues on mobile." },
+    { n: "Grid / column alignment", d: "All columns align to the grid system. Check at 320px, 768px, 1280px, 1920px. No broken or misaligned layouts." },
+    { n: "No horizontal overflow", d: "No unwanted horizontal scrollbar at any breakpoint. Check every page section. Inspect overflow-x on body." },
+    { n: "Z-index stacking order", d: "Dropdowns, modals, tooltips, sticky headers — all appear above correct elements. No clipping or hidden overlaps." },
+    { n: "Footer position", d: "Footer sits at bottom of page even on short-content pages. No gap between content and footer. Check on mobile too." },
+  ]},
+  { cat: "Typography", steps: [
+    { n: "Web fonts load correctly", d: "Fonts render as designed — no FOUT (flash of unstyled text) or fallback fonts visible in final state. Check slow network." },
+    { n: "Heading hierarchy H1→H3", d: "Only one H1 per page. H2 under H1, H3 under H2. No skipped levels. Visual size matches semantic rank." },
+    { n: "Text contrast WCAG AA", d: "Body text 4.5:1 ratio, large text 3:1 minimum against background. Use browser DevTools or Colour Contrast Analyser." },
+    { n: "Text truncation & overflow", d: "Long strings don't break layouts. Ellipsis shows in truncated elements. No text spills outside its container." },
+  ]},
+  { cat: "Images & Media", steps: [
+    { n: "All images have alt text", d: "Every <img> has meaningful alt attribute. Decorative images use alt=''. Check with DevTools or screen reader." },
+    { n: "No broken images", d: "Every image loads correctly. No broken icon shown. Check Network tab — zero 404s on image assets." },
+    { n: "Image aspect ratios correct", d: "No squished or stretched images. srcset / sizes attributes set correctly. Check on retina and low-res screens." },
+    { n: "Video autoplay policy", d: "Videos do not autoplay with sound. Controls visible and functional. Poster frame set. Muted autoplay is acceptable." },
+  ]},
+  { cat: "Forms", steps: [
+    { n: "Required fields block submit", d: "Leave all required fields empty. Click submit. Form must NOT submit — all required fields show error messages." },
+    { n: "Email & phone validation", d: "Enter invalid: 'abc', 'abc@', '@x.com', too-short phone, letters in phone. All must fail. Valid formats pass." },
+    { n: "Password rules enforced", d: "Enter weak passwords: '123', 'password'. Rules displayed: min length, uppercase, symbol. Strong password passes." },
+    { n: "Whitespace-only input rejected", d: "Enter only spaces in required text fields. Must fail validation — not treated as valid non-empty input." },
+    { n: "Double-submit prevented", d: "Click submit once. Button disables immediately. Only ONE network request sent. No duplicate records created." },
+    { n: "Success state shown clearly", d: "Submit valid form. Clear success message appears with context. No raw JSON, no blank page, no silent fail." },
+    { n: "Server error handled gracefully", d: "Disconnect network or trigger server error. User-friendly error message shown. No JS crash, no raw stack trace." },
+    { n: "Form labels linked to inputs", d: "Every input has <label for='id'> or aria-label. Clicking label focuses its field. Screen reader announces correctly." },
+  ]},
+  { cat: "Interactivity", steps: [
+    { n: "All links work", d: "No dead href='#' links in final UI. External links open new tab with rel='noopener noreferrer'. No 404 destinations." },
+    { n: "Button states styled", d: "All buttons have: default, hover, active, focus, disabled states styled. Focus ring visible for keyboard users." },
+    { n: "Keyboard navigation works", d: "Tab through entire page. Focus order is logical top→bottom left→right. No keyboard traps. Enter triggers buttons." },
+    { n: "Mobile touch targets ≥ 44px", d: "All interactive elements are at least 44×44px on mobile. No overlapping tap areas. Test on real device or DevTools." },
+  ]},
+  { cat: "Responsive Behavior", steps: [
+    { n: "Mobile layout (320px)", d: "Open DevTools → 320px width. All content visible and usable. No text overflow. Navigation collapses correctly." },
+    { n: "Tablet layout (768px)", d: "Check layout at 768px. Columns rearrange correctly. Images resize. Touch targets still large enough." },
+    { n: "Tables responsive", d: "Data tables scroll horizontally on small screens or collapse to card layout. No data cut off or hidden." },
+  ]},
+  { cat: "Performance & Console", steps: [
+    { n: "Zero console errors", d: "Open browser console. Load page, navigate, submit forms. Zero red errors. Warnings reviewed and justified." },
+    { n: "Zero 404 assets", d: "Open Network tab. Reload page. Filter by status 404. Zero missing scripts, styles, fonts, or images." },
+    { n: "Animations run at 60fps", d: "All transitions and animations are smooth. No jank on scroll. Only transform/opacity animated (not layout props)." },
+  ]},
+  { cat: "SEO & Meta", steps: [
+    { n: "Favicon & page title", d: "Browser tab shows correct favicon (not default browser icon) and meaningful <title> tag. Not 'Untitled Document'." },
+    { n: "Open Graph tags present", d: "og:title, og:description, og:image all set with correct values. Test by pasting URL into social preview tool." },
+  ]}
+];
+
+let ALL_STEPS = [];
+let idx = 1;
+STEPS_DEF.forEach(c => c.steps.forEach(s => {
+  ALL_STEPS.push({ ...s, id: idx++, cat: c.cat });
+}));
+
+let currentSessionId = null;
+
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem('qa_sessions') || '[]'); } catch { return []; }
+}
+function saveSessions(s) { localStorage.setItem('qa_sessions', JSON.stringify(s)); }
+function getCurrentSession() {
+  const ss = getSessions();
+  return ss.find(s => s.id === currentSessionId) || null;
+}
+function saveCurrentSession(session) {
+  const ss = getSessions();
+  const i = ss.findIndex(s => s.id === currentSessionId);
+  if (i >= 0) ss[i] = session; else ss.push(session);
+  saveSessions(ss);
+}
+
+function newSessionData(url, name) {
+  const steps = {};
+  ALL_STEPS.forEach(s => { steps[s.id] = { status: 'open', bugs: [], notes: '' }; });
+  return {
+    id: Date.now().toString(),
+    url: url,
+    name: name || url,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    steps
+  };
+}
+
+function loadSession(id) {
+  currentSessionId = id;
+  localStorage.setItem('qa_current_session', id);
+  render();
+}
+
+function showNewSession() {
+  document.getElementById('newSessionUrl').value = '';
+  document.getElementById('newSessionName').value = '';
+  document.getElementById('newSessionModal').classList.add('show');
+}
+
+function createSession() {
+  const url = document.getElementById('newSessionUrl').value.trim();
+  const name = document.getElementById('newSessionName').value.trim();
+  if (!url) { alert('Enter a URL'); return; }
+  const session = newSessionData(url, name);
+  const ss = getSessions();
+  ss.push(session);
+  saveSessions(ss);
+  currentSessionId = session.id;
+  localStorage.setItem('qa_current_session', session.id);
+  closeModal('newSessionModal');
+  render();
+}
+
+function showSessions() {
+  const ss = getSessions();
+  const list = document.getElementById('sessionsList');
+  if (ss.length === 0) {
+    list.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:10px">No sessions yet.</div>';
+  } else {
+    list.innerHTML = ss.slice().reverse().map(s => {
+      const steps = Object.values(s.steps);
+      const passed = steps.filter(x => x.status === 'pass').length;
+      const failed = steps.filter(x => x.status === 'fail').length;
+      const d = new Date(s.createdAt);
+      return `<div class="session-row" onclick="closeModal('sessionsModal');loadSession('${s.id}')">
+        <div class="session-row-url">${s.name || s.url}</div>
+        <div class="session-row-meta">${d.toLocaleDateString()} ${d.toLocaleTimeString()} &nbsp;|&nbsp; ${passed} pass / ${failed} fail / ${30 - passed - failed} pending</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('sessionsModal').classList.add('show');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function openTarget() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) { alert('Enter a URL first'); return; }
+  const session = getCurrentSession();
+  if (session) {
+    session.url = url;
+    session.name = session.name === session.url ? url : session.name;
+    saveCurrentSession(session);
+    updateSessionInfo(session);
+  }
+  window.open(url, '_blank', 'noopener');
+}
+
+function resetCurrent() {
+  if (!currentSessionId) return;
+  if (!confirm('Reset all steps for this session? Bugs and notes will be cleared.')) return;
+  const ss = getSessions();
+  const i = ss.findIndex(s => s.id === currentSessionId);
+  if (i >= 0) {
+    ss[i].steps = {};
+    ALL_STEPS.forEach(s => { ss[i].steps[s.id] = { status: 'open', bugs: [], notes: '' }; });
+    ss[i].updatedAt = new Date().toISOString();
+    saveSessions(ss);
+  }
+  render();
+}
+
+function goReport() {
+  if (!currentSessionId) { alert('No active session'); return; }
+  window.open('report.html?session=' + currentSessionId, '_blank');
+}
+
+function getStepState(stepId) {
+  const session = getCurrentSession();
+  if (!session) return { status: 'open', bugs: [], notes: '' };
+  return session.steps[stepId] || { status: 'open', bugs: [], notes: '' };
+}
+
+function updateStep(stepId, updates) {
+  const session = getCurrentSession();
+  if (!session) return;
+  const st = session.steps[stepId] || { status: 'open', bugs: [], notes: '' };
+  Object.assign(st, updates);
+  st.updatedAt = new Date().toISOString();
+  session.steps[stepId] = st;
+  session.updatedAt = new Date().toISOString();
+  saveCurrentSession(session);
+}
+
+function openBugs(stepId) {
+  const st = getStepState(stepId);
+  return st.bugs.filter(b => !b.resolved).length;
+}
+
+function totalOpenBugs() {
+  return ALL_STEPS.reduce((a, s) => a + openBugs(s.id), 0);
+}
+
+let expanded = {};
+
+function updateSessionInfo(session) {
+  if (session) {
+    document.getElementById('sessionInfo').textContent = session.name || session.url;
+    document.getElementById('urlInput').value = session.url || '';
+  } else {
+    document.getElementById('sessionInfo').textContent = 'no session';
+  }
+}
+
+function updateStats() {
+  const session = getCurrentSession();
+  const steps = session ? Object.values(session.steps) : [];
+  const passed = steps.filter(x => x.status === 'pass').length;
+  const failed = steps.filter(x => x.status === 'fail').length;
+  const pending = 30 - passed - failed;
+  const done = passed + failed;
+  const bugs = totalOpenBugs();
+
+  document.getElementById('st-pass').textContent = passed;
+  document.getElementById('st-fail').textContent = failed;
+  document.getElementById('st-pend').textContent = pending;
+  document.getElementById('st-bugs').textContent = bugs;
+  const pct = Math.round(done / 30 * 100);
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('pct').textContent = pct + '% complete (' + done + '/30)';
+
+  // Final card
+  const fc = document.getElementById('finalCard');
+  if (done === 30) {
+    fc.classList.add('show');
+    if (failed === 0 && bugs === 0) {
+      fc.className = 'final-card show ok';
+      document.getElementById('finalTitle').textContent = '✓ All 30 steps passed — site is clean.';
+      document.getElementById('finalSub').textContent = 'No open bugs. Ready to ship. View full report for details.';
+    } else {
+      fc.className = 'final-card show no';
+      document.getElementById('finalTitle').textContent = '✗ Cannot accept — ' + bugs + ' open bug' + (bugs !== 1 ? 's' : '') + ' on ' + failed + ' failed step' + (failed !== 1 ? 's' : '') + '.';
+      document.getElementById('finalSub').textContent = 'Resolve all bugs and re-verify failed steps before sign-off. View Report for full breakdown.';
+    }
+  } else {
+    fc.classList.remove('show');
+  }
+}
+
+function renderSidebar() {
+  const cats = [...new Set(ALL_STEPS.map(s => s.cat))];
+  const session = getCurrentSession();
+  let html = '';
+  cats.forEach(cat => {
+    const catSteps = ALL_STEPS.filter(s => s.cat === cat);
+    const passed = catSteps.filter(s => session && session.steps[s.id]?.status === 'pass').length;
+    const failed = catSteps.filter(s => session && session.steps[s.id]?.status === 'fail').length;
+    const allPass = passed === catSteps.length;
+    const hasFail = failed > 0;
+    const cls = allPass ? 'all-pass' : hasFail ? 'has-fail' : '';
+    const dot = allPass ? 'pass' : hasFail ? 'fail' : passed > 0 ? 'partial' : '';
+    html += `<div class="sidebar-item ${cls}" onclick="scrollToCat('${cat.replace(/'/g, '')}')">
+      <span>${cat}</span>
+      <span class="sidebar-dot ${dot}"></span>
+    </div>`;
+  });
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function scrollToCat(cat) {
+  const el = document.getElementById('cat-' + cat.replace(/\s+/g, '-'));
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderContent() {
+  const session = getCurrentSession();
+  if (!session) {
+    document.getElementById('content').innerHTML = `
+      <div style="padding:40px;text-align:center;color:var(--text3)">
+        <div style="font-family:var(--sans);font-size:20px;font-weight:700;color:var(--text2);margin-bottom:12px">No Active Session</div>
+        <div style="font-size:12px;margin-bottom:20px">Create a new session to start testing.</div>
+        <button class="btn btn-green" onclick="showNewSession()">+ New Test Session</button>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+  let curCat = '';
+  ALL_STEPS.forEach(step => {
+    if (step.cat !== curCat) {
+      curCat = step.cat;
+      const catId = 'cat-' + curCat.replace(/\s+/g, '-');
+      html += `<div id="${catId}" class="cat-header">${curCat}</div>`;
+    }
+
+    const st = session.steps[step.id] || { status: 'open', bugs: [], notes: '' };
+    const ob = openBugs(step.id);
+    const exp = expanded[step.id] || false;
+    const badgeClass = 'sbadge sbadge-' + st.status;
+    const badgeTxt = st.status === 'pass' ? 'pass' : st.status === 'fail' ? (ob > 0 ? ob + ' bug' + (ob > 1 ? 's' : '') : 'fail') : 'pending';
+
+    html += `<div class="step ${st.status}" id="step-${step.id}">
+      <div class="step-head" onclick="tog(${step.id})">
+        <span class="snum">${String(step.id).padStart(2, '0')}</span>
+        <span class="sname">${step.n}</span>
+        <span class="${badgeClass}">${badgeTxt}</span>
+        <span class="sarr ${exp ? 'open' : ''}">▼</span>
+      </div>
+      <div class="step-body ${exp ? 'open' : ''}">
+        <div class="sdesc">${step.d}</div>
+        <div class="warn-msg ${st.status === 'fail' && ob > 0 ? 'show' : ''}" id="warn-${step.id}">
+          ⚠ ${ob} open bug${ob !== 1 ? 's' : ''} must be resolved before marking this step as passed.
+        </div>
+        <div class="acts">
+          <button class="btn btn-green" onclick="setSt(${step.id},'pass')">✓ Pass</button>
+          <button class="btn btn-red" onclick="doFail(${step.id})">✗ Fail + log bug</button>
+          ${st.status !== 'open' ? `<button class="btn" onclick="setSt(${step.id},'open')">↺ Reset</button>` : ''}
+        </div>
+        <div class="notes-row">
+          <div class="notes-label">Notes</div>
+          <textarea class="notes-inp" id="notes-${step.id}" placeholder="Add test notes, observations..." onblur="saveNotes(${step.id})">${st.notes || ''}</textarea>
+        </div>
+        <div class="bugs-section">
+          ${st.bugs.length ? '<div class="bugs-label">Bugs logged</div>' : ''}
+          ${st.bugs.map((b, i) => `
+            <div class="bug-item">
+              <span class="bug-text ${b.resolved ? 'res' : ''}">${b.text}</span>
+              ${!b.resolved
+                ? `<button class="bug-resolve" onclick="resolveB(${step.id},${i})">resolved ✓</button>`
+                : `<span class="bug-done">✓ fixed</span>`}
+            </div>`).join('')}
+          <div class="bug-add-row" id="badd-${step.id}" style="display:${st.status === 'fail' ? 'flex' : 'none'}">
+            <input class="bug-inp" id="bi-${step.id}" placeholder="Describe the bug..." onkeydown="if(event.key==='Enter')addB(${step.id})">
+            <button class="btn" onclick="addB(${step.id})">Add bug</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function render() {
+  const session = getCurrentSession();
+  updateSessionInfo(session);
+  renderSidebar();
+  renderContent();
+  updateStats();
+}
+
+function tog(id) {
+  expanded[id] = !expanded[id];
+  render();
+}
+
+function setSt(id, s) {
+  if (s === 'pass' && openBugs(id) > 0) {
+    expanded[id] = true;
+    render();
+    return;
+  }
+  updateStep(id, { status: s });
+  render();
+}
+
+function doFail(id) {
+  updateStep(id, { status: 'fail' });
+  expanded[id] = true;
+  render();
+  setTimeout(() => {
+    const inp = document.getElementById('bi-' + id);
+    if (inp) { inp.parentElement.style.display = 'flex'; inp.focus(); }
+  }, 50);
+}
+
+function addB(id) {
+  const inp = document.getElementById('bi-' + id);
+  const txt = inp ? inp.value.trim() : '';
+  if (!txt) return;
+  const st = getStepState(id);
+  st.bugs.push({ text: txt, resolved: false, createdAt: new Date().toISOString() });
+  updateStep(id, { bugs: st.bugs });
+  render();
+  setTimeout(() => {
+    const a = document.getElementById('badd-' + id);
+    if (a) a.style.display = 'flex';
+  }, 50);
+}
+
+function resolveB(id, i) {
+  const st = getStepState(id);
+  st.bugs[i].resolved = true;
+  st.bugs[i].resolvedAt = new Date().toISOString();
+  updateStep(id, { bugs: st.bugs });
+  render();
+}
+
+function saveNotes(id) {
+  const el = document.getElementById('notes-' + id);
+  if (el) updateStep(id, { notes: el.value });
+}
+
+// Init
+window.addEventListener('click', e => {
+  ['newSessionModal', 'sessionsModal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (e.target === el) closeModal(id);
+  });
+});
+
+const savedId = localStorage.getItem('qa_current_session');
+if (savedId && getSessions().find(s => s.id === savedId)) {
+  currentSessionId = savedId;
+  render();
+} else {
+  render();
+  showNewSession();
+}
+</script>
+</body>
+</html>
