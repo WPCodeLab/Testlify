@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testlify — Report (Light)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--text:#0f172a;--muted:#6b7280;--accent:#16a34a;--danger:#dc2626;--surface:#f8fafc}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);margin:0}
+.container{max-width:1000px;margin:28px auto;padding:20px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.card{background:#fff;border:1px solid #eef2f6;padding:16px;border-radius:10px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:160px 1fr;gap:16px}
+.metric{padding:14px;border-radius:8px;background:var(--surface);border:1px solid #eef2f6}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div style="font-weight:700;font-size:20px">Testlify Report</div>
+      <div style="color:var(--muted)">QA session report</div>
+    </div>
+    <div>
+      <button onclick="window.print()" class="btn">Print</button>
+    </div>
+  </div>
+  <div id="reportContent">Loading report...</div>
+</div>
+<script>
+   158|const STEPS_DEF = [
+   159|  { cat: "Layout & Structure", steps: [
+   160|    { n: "Viewport meta tag" },{ n: "Grid / column alignment" },{ n: "No horizontal overflow" },{ n: "Z-index stacking order" },{ n: "Footer position" }
+   161|  ]},
+   162|  { cat: "Typography", steps: [
+   163|    { n: "Web fonts load correctly" },{ n: "Heading hierarchy H1→H3" },{ n: "Text contrast WCAG AA" },{ n: "Text truncation & overflow" }
+   164|  ]},
+   165|  { cat: "Images & Media", steps: [
+   166|    { n: "All images have alt text" },{ n: "No broken images" },{ n: "Image aspect ratios correct" },{ n: "Video autoplay policy" }
+   167|  ]},
+   168|  { cat: "Forms", steps: [
+   169|    { n: "Required fields block submit" },{ n: "Email & phone validation" },{ n: "Password rules enforced" },
+   170|    { n: "Whitespace-only input rejected" },{ n: "Double-submit prevented" },{ n: "Success state shown clearly" },
+   171|    { n: "Server error handled gracefully" },{ n: "Form labels linked to inputs" }
+   172|  ]},
+   173|  { cat: "Interactivity", steps: [
+   174|    { n: "All links work" },{ n: "Button states styled" },{ n: "Keyboard navigation works" },{ n: "Mobile touch targets ≥ 44px" }
+   175|  ]},
+   176|  { cat: "Responsive Behavior", steps: [
+   177|    { n: "Mobile layout (320px)" },{ n: "Tablet layout (768px)" },{ n: "Tables responsive" }
+   178|  ]},
+   179|  { cat: "Performance & Console", steps: [
+   180|    { n: "Zero console errors" },{ n: "Zero 404 assets" },{ n: "Animations run at 60fps" }
+   181|  ]},
+   182|  { cat: "SEO & Meta", steps: [
+   183|    { n: "Favicon & page title" },{ n: "Open Graph tags present" }
+   184|  ]}
+   185|];
+   186|
+   187|const FORM_STEPS_DEF = [
+   188|  { cat: "Field Validation", steps: [
+   189|    { n: "Required fields block submit" },{ n: "Email format validation" },{ n: "Phone number format" },
+   190|    { n: "Min / max length enforced" },{ n: "Number field \u2014 non-numeric input" },{ n: "Password strength rules" },
+   191|    { n: "Password confirm match" },{ n: "URL field format" }
+   192|  ]},
+   193|  { cat: "User Input Behavior", steps: [
+   194|    { n: "Paste into fields works" },{ n: "Autofill / autocomplete" },{ n: "Copy from read-only fields" },
+   195|    { n: "Tab key order" },{ n: "Special characters in text fields" },{ n: "Whitespace-only input" },
+   196|    { n: "Leading/trailing spaces trimmed" }
+   197|  ]},
+   198|  { cat: "Submit & Response", steps: [
+   199|    { n: "Submit button disabled after click" },{ n: "Loading state shows" },{ n: "Success message on valid submit" },
+   200|    { n: "Error on server failure" },{ n: "Form data sent correctly" },{ n: "Redirect after success" }
+   201|  ]},
+   202|  { cat: "Edge Cases", steps: [
+   203|    { n: "Submit empty form directly" },{ n: "Rapid repeated submit" },{ n: "Browser back after submit" },
+   204|    { n: "Refresh on success page" },{ n: "Very long input values" },{ n: "Dropdown with no selection" }
+   205|  ]},
+   206|  { cat: "Accessibility & UX", steps: [
+   207|    { n: "Error messages are descriptive" },{ n: "Labels linked to inputs" },
+   208|    { n: "Keyboard-only form completion" },{ n: "Error focus management" }
+   209|  ]}
+   210|];
+   211|
+   212|const TEST_TYPES = {
+   213|  visual: { label: 'Visual Testing', def: STEPS_DEF },
+   214|  form:   { label: 'Form Testing',   def: FORM_STEPS_DEF }
+   215|};
+   216|
+   217|let ALL_STEPS = [];
+   218|
+   219|function buildSteps(type) {
+   220|  ALL_STEPS = [];
+   221|  let i = 1;
+   222|  const def = (TEST_TYPES[type] || TEST_TYPES.visual).def;
+   223|  def.forEach(c => c.steps.forEach(s => { ALL_STEPS.push({ ...s, id: i++, cat: c.cat }); }));
+   224|}
+   225|
+   226|function getSessions() {
+   227|  try { return JSON.parse(localStorage.getItem('qa_sessions') || '[]'); } catch { return []; }
+   228|}
+   229|
+   230|function getGrade(passRate, hasFail, openBugs) {
+   231|  if (openBugs > 0) return { g: 'F', l: 'Blocked — open bugs' };
+   232|  if (passRate === 100) return { g: 'A', l: 'Perfect score' };
+   233|  if (passRate >= 87) return { g: 'B', l: 'Good — minor issues' };
+   234|  if (passRate >= 70) return { g: 'C', l: 'Needs improvement' };
+   235|  if (passRate >= 50) return { g: 'D', l: 'Significant issues' };
+   236|  return { g: 'F', l: 'Critical failures' };
+   237|}
+   238|
+   239|function renderReport(session) {
+   240|  buildSteps(session.type || 'visual');
+   241|  const typeLabel = (TEST_TYPES[session.type] || TEST_TYPES.visual).label;
+   242|  const steps = ALL_STEPS.map(s => ({
+   243|    ...s,
+   244|    state: session.steps[s.id] || { status: 'open', bugs: [], notes: '' }
+   245|  }));
+   246|
+   247|  const total = ALL_STEPS.length;
+   248|  const passed = steps.filter(s => s.state.status === 'pass').length;
+   249|  const failed = steps.filter(s => s.state.status === 'fail').length;
+   250|  const pending = steps.filter(s => s.state.status === 'open').length;
+   251|  const allBugs = steps.flatMap(s => s.state.bugs.map(b => ({ ...b, step: s })));
+   252|  const openBugs = allBugs.filter(b => !b.resolved).length;
+   253|  const resolvedBugs = allBugs.filter(b => b.resolved).length;
+   254|  const passRate = total ? Math.round(passed / total * 100) : 0;
+   255|  const grade = getGrade(passRate, failed > 0, openBugs);
+   256|
+   257|  const isPass = failed === 0 && pending === 0 && openBugs === 0;
+   258|  const createdAt = new Date(session.createdAt);
+   259|  const updatedAt = new Date(session.updatedAt || session.createdAt);
+   260|
+   261|  // Category breakdown
+   262|  const cats = [...new Set(ALL_STEPS.map(s => s.cat))];
+   263|
+   264|  let html = `
+   265|  <div class="report-header">
+   266|    <div class="report-tag">QA Test Report &nbsp;&middot;&nbsp; ${typeLabel}</div>
+   267|    <div class="report-title">${session.name || 'Untitled Session'}</div>
+   268|    <div class="report-url">${session.url}</div>
+   269|    <div class="report-meta">Session created: ${createdAt.toLocaleString()} &nbsp;|&nbsp; Last updated: ${updatedAt.toLocaleString()}</div>
+   270|  </div>
+   271|
+   272|  <div class="grade-row">
+   273|    <div class="grade-card grade-${grade.g}">
+   274|      <div class="grade-letter">${grade.g}</div>
+   275|      <div class="grade-label">${grade.l}</div>
+   276|    </div>
+   277|    <div class="metrics-grid">
+   278|      <div class="metric"><div class="metric-n">${passRate}%</div><div class="metric-l">Pass rate</div></div>
+   279|      <div class="metric"><div class="metric-n" style="color:var(--green)">${passed}</div><div class="metric-l">Passed</div></div>
+   280|      <div class="metric"><div class="metric-n" style="color:var(--red)">${failed}</div><div class="metric-l">Failed</div></div>
+   281|      <div class="metric"><div class="metric-n" style="color:var(--amber)">${openBugs}</div><div class="metric-l">Open bugs</div></div>
+   282|      <div class="metric"><div class="metric-n" style="color:var(--text3)">${pending}</div><div class="metric-l">Pending</div></div>
+   283|      <div class="metric"><div class="metric-n">${allBugs.length}</div><div class="metric-l">Total bugs</div></div>
+   284|      <div class="metric"><div class="metric-n" style="color:var(--green)">${resolvedBugs}</div><div class="metric-l">Resolved</div></div>
+   285|      <div class="metric"><div class="metric-n">30</div><div class="metric-l">Total steps</div></div>
+   286|    </div>
+   287|  </div>
+   288|
+   289|  <div class="verdict ${isPass ? 'pass' : 'fail'}">
+   290|    <div class="verdict-title">${isPass ? '✓ ACCEPTED — All ' + total + ' checks passed. Ready for release.' : '✗ NOT ACCEPTED — ' + (openBugs > 0 ? openBugs + ' open bug' + (openBugs !== 1 ? 's' : '') + ' must be resolved. ' : '') + (failed > 0 ? failed + ' step' + (failed !== 1 ? 's' : '') + ' failed. ' : '') + (pending > 0 ? pending + ' step' + (pending !== 1 ? 's' : '') + ' not yet tested.' : '')}</div>
+   291|    <div class="verdict-body">${isPass ? 'All visual, functional, form, responsive, performance, and SEO checks passed with zero open bugs.' : 'Cannot ship until all failed steps are resolved and bugs are marked as fixed. Re-run tests after fixes.'}</div>
+   292|  </div>
+   293|
+   294|  <div class="cat-summary">
+   295|    <div class="section-title">Category Breakdown</div>
+   296|    ${cats.map(cat => {
+   297|      const catSteps = steps.filter(s => s.cat === cat);
+   298|      const cp = catSteps.filter(s => s.state.status === 'pass').length;
+   299|      const cf = catSteps.filter(s => s.state.status === 'fail').length;
+   300|      const pct = Math.round(cp / catSteps.length * 100);
+   301|      const barClass = cp === catSteps.length ? 'full' : cp > 0 ? 'partial' : 'none';
+   302|      const statusColor = cp === catSteps.length ? 'var(--green)' : cf > 0 ? 'var(--red)' : 'var(--text3)';
+   303|      const statusTxt = cp === catSteps.length ? '✓ all pass' : cf > 0 ? cf + ' failed' : 'pending';
+   304|      return `<div class="cat-row">
+   305|        <span class="cat-name">${cat}</span>
+   306|        <div class="cat-bar-wrap"><div class="cat-bar ${barClass}" style="width:${pct}%"></div></div>
+   307|        <span class="cat-pct">${pct}%</span>
+   308|        <span class="cat-status" style="color:${statusColor}">${statusTxt}</span>
+   309|      </div>`;
+   310|    }).join('')}
+   311|  </div>
+   312|
+   313|  <div class="steps-section">
+   314|    <div class="section-title">All ${total} Steps — Detailed Results</div>
+   315|    <table class="steps-table">
+   316|      <thead>
+   317|        <tr>
+   318|          <th style="width:30px">#</th>
+   319|          <th>Step</th>
+   320|          <th>Category</th>
+   321|          <th style="width:70px">Status</th>
+   322|          <th style="width:60px">Bugs</th>
+   323|        </tr>
+   324|      </thead>
+   325|      <tbody>
+   326|        ${steps.map(s => {
+   327|          const ob = s.state.bugs.filter(b => !b.resolved).length;
+   328|          const tb = s.state.bugs.length;
+   329|          return `<tr>
+   330|            <td style="color:var(--text3)">${String(s.id).padStart(2,'0')}</td>
+   331|            <td style="color:${s.state.status==='pass'?'var(--green)':s.state.status==='fail'?'var(--red)':'var(--text)'}">${s.n}</td>
+   332|            <td style="color:var(--text3)">${s.cat}</td>
+   333|            <td><span class="badge badge-${s.state.status}">${s.state.status}</span></td>
+   334|            <td style="color:${ob>0?'var(--red)':tb>0?'var(--green)':'var(--text3)'}">${ob>0?ob+' open':tb>0?'0 open':'-'}</td>
+   335|          </tr>`;
+   336|        }).join('')}
+   337|      </tbody>
+   338|    </table>
+   339|  </div>
+   340|
+   341|  ${allBugs.length > 0 ? `
+   342|  <div class="bugs-section">
+   343|    <div class="section-title">Bug Report (${allBugs.length} total — ${openBugs} open, ${resolvedBugs} resolved)</div>
+   344|    ${steps.filter(s => s.state.bugs.length > 0).map(s => `
+   345|      <div class="bug-card">
+   346|        <div class="bug-card-head">
+   347|          <span>${s.n}</span>
+   348|          <span class="step-ref">Step ${String(s.id).padStart(2,'0')} · ${s.cat}</span>
+   349|        </div>
+   350|        <div class="bug-list">
+   351|          ${s.state.bugs.map(b => `
+   352|            <div class="bug-row">
+   353|              <div class="bug-dot ${b.resolved?'resolved':'open'}"></div>
+   354|              <div class="bug-txt ${b.resolved?'res':''}">${b.text}</div>
+   355|              <div class="bug-status">${b.resolved?'✓ resolved':'● open'}</div>
+   356|            </div>`).join('')}
+   357|        </div>
+   358|      </div>`).join('')}
+   359|  </div>` : ''}
+   360|
+   361|  ${steps.some(s => s.state.notes && s.state.notes.trim()) ? `
+   362|  <div class="notes-section">
+   363|    <div class="section-title">Tester Notes</div>
+   364|    ${steps.filter(s => s.state.notes && s.state.notes.trim()).map(s => `
+   365|      <div class="note-row">
+   366|        <div class="note-step">Step ${String(s.id).padStart(2,'0')} — ${s.n}</div>
+   367|        <div class="note-text">${s.state.notes}</div>
+   368|      </div>`).join('')}
+   369|  </div>` : ''}
+   370|
+   371|  <div class="report-footer">
+   372|    <span class="footer-brand">QA Visual Tester</span>
+   373|    <span class="footer-time">Report generated: ${new Date().toLocaleString()}</span>
+   374|  </div>`;
+   375|
+   376|  document.getElementById('reportContent').innerHTML = html;
+   377|  document.getElementById('noSession').style.display = 'none';
+   378|}
+   379|
+   380|function showPicker() {
+   381|  const ss = getSessions();
+   382|  document.getElementById('noSession').style.display = 'block';
+   383|  document.getElementById('reportContent').innerHTML = '';
+   384|  if (ss.length === 0) {
+   385|    document.getElementById('sessionPicker').innerHTML = '<div style="font-size:11px;color:var(--text3)">No sessions found. Go back to tester and create one.</div>';
+   386|    return;
+   387|  }
+   388|  let html = '<div class="picker"><div class="picker-title">Select a session to view its report</div>';
+   389|  ss.slice().reverse().forEach(s => {
+   390|    const steps = Object.values(s.steps || {});
+   391|    const passed = steps.filter(x => x.status === 'pass').length;
+   392|    const failed = steps.filter(x => x.status === 'fail').length;
+   393|    const tot = steps.length;
+   394|    const tLabel = (TEST_TYPES[s.type] || TEST_TYPES.visual).label;
+   395|    const d = new Date(s.createdAt);
+   396|    html += `<button class="session-btn" onclick="loadAndRender('${s.id}')">
+   397|      <div>${s.name || s.url}</div>
+   398|      <div class="session-btn-meta">${d.toLocaleString()} &nbsp;&middot;&nbsp; ${tLabel} &nbsp;&middot;&nbsp; ${passed} pass / ${failed} fail / ${tot-passed-failed} pending</div>
+   399|    </button>`;
+   400|  });
+   401|  html += '</div>';
+   402|  document.getElementById('sessionPicker').innerHTML = html;
+   403|}
+   404|
+   405|function loadAndRender(id) {
+   406|  const ss = getSessions();
+   407|  const session = ss.find(s => s.id === id);
+   408|  if (session) {
+   409|    document.getElementById('noSession').style.display = 'none';
+   410|    renderReport(session);
+   411|  }
+   412|}
+   413|
+   414|// Init — check URL param or localStorage
+   415|const params = new URLSearchParams(window.location.search);
+   416|const sessionId = params.get('session') || localStorage.getItem('qa_current_session');
+   417|const sessions = getSessions();
+   418|const session = sessions.find(s => s.id === sessionId);
+   419|if (session) {
+   420|  renderReport(session);
+   421|} else {
+   422|  showPicker();
+   423|}
+   424|</script>
+</body>
+</html>

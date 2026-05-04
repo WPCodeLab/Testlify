@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testlify — QA Tester (Light)</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --surface:#f7faf9; --muted:#6b7280; --text:#0f172a; --accent:#16a34a; --danger:#dc2626;
+  --radius:8px; --container:1100px; --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+*{box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);margin:0;line-height:1.6}
+.container{max-width:var(--container);margin:28px auto;padding:20px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.brand{font-weight:700;font-size:20px}
+.controls{display:flex;gap:8px}
+.btn{padding:8px 12px;border-radius:6px;border:1px solid #e6e9eb;background:transparent;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff;border-color:rgba(22,163,74,.2)}
+.topbar{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.input{flex:1;padding:10px 12px;border:1px solid #e6e9eb;border-radius:8px}
+.grid{display:grid;grid-template-columns:260px 1fr;gap:20px}
+.sidebar{background:var(--surface);padding:12px;border-radius:8px;border:1px solid #eef2f6}
+.card{background:#fff;padding:14px;border-radius:10px;border:1px solid #eef2f6;margin-bottom:12px}
+.step{border-left:4px solid transparent;padding:12px;background:#fff;border-radius:8px;border:1px solid #eef2f6;margin-bottom:10px}
+.step.pass{border-left-color:var(--accent)}
+.step.fail{border-left-color:var(--danger)}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center}
+.modal-card{background:#fff;padding:20px;border-radius:10px;width:520px;max-width:94vw}
+@media (max-width:900px){.grid{grid-template-columns:1fr;}.sidebar{order:2}.container{padding:12px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="brand">Testlify <small style="color:var(--muted);font-weight:500;margin-left:8px">QA Visual Tester</small></div>
+    <div class="controls">
+      <button class="btn" onclick="showSessions()">Sessions</button>
+      <button class="btn" onclick="resetCurrent()">Reset</button>
+      <button class="btn btn-primary" onclick="goReport()">View Report</button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <input id="urlInput" class="input" placeholder="https://example.com">
+    <button class="btn btn-primary" onclick="openTarget()">Open</button>
+  </div>
+
+  <div class="grid">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main id="content">
+      <div class="card" id="mainCard">
+        <h3 style="margin:0 0 10px">No active session</h3>
+        <p style="color:var(--muted);margin:0 0 12px">Create new test session to begin. Sessions saved locally in your browser.</p>
+        <button class="btn btn-primary" onclick="showNewSession()">+ New Test Session</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- modal placeholder -->
+<div id="newSessionModal" style="display:none" class="modal" onclick="if(event.target===this)closeModal('newSessionModal')">
+  <div class="modal-card">
+    <h3 style="margin:0 0 8px">New Test Session</h3>
+    <p style="color:var(--muted);margin:0 0 12px">Enter target site and session name.</p>
+    <input id="newSessionUrl" class="input" placeholder="https://example.com" style="margin-bottom:8px">
+    <input id="newSessionName" class="input" placeholder="Session name (optional)" style="margin-bottom:8px">
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn" onclick="closeModal('newSessionModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="createSession()">Create</button>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
